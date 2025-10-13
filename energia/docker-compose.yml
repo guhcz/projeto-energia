@@ -1,0 +1,39 @@
+version: "3.9"
+
+networks:
+  energia-net:
+
+volumes:
+  oracle-data:
+
+services:
+  db:
+    image: gvenzl/oracle-xe:21-slim
+    container_name: oracle-xe
+    environment:
+      ORACLE_PASSWORD: adminpwd
+      APP_USER: energia
+      APP_USER_PASSWORD: energiapwd
+      ORACLE_CHARACTERSET: AL32UTF8
+    ports:
+      - "1521:1521"
+    volumes:
+      - oracle-data:/opt/oracle/oradata
+    networks:
+      - energia-net
+
+  app:
+    image: energia:local
+    container_name: energia-app
+    depends_on:
+      - db
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+
+      DB_URL: jdbc:oracle:thin:@db:1521/XEPDB1
+      DB_USER: energia
+      DB_PASS: energiapwd
+    ports:
+      - "8080:8080"
+    networks:
+      - energia-net
