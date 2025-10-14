@@ -78,15 +78,9 @@ docker compose down        # para e mantém dados
 docker compose down -v     # para e apaga o volume do Oracle
 ```
 
-> **Dicas**
-> - Se a aplicação não conecta no Oracle, aguarde o **db** subir (veja logs) e confirme a URL `jdbc:oracle:thin:@db:1521/XEPDB1`.
-> - Se mudar entidades, crie nova migração Flyway (V5+), não edite as antigas.
-
 ---
 
 ##  Pipeline CI/CD
-
-> _Exemplo sugerido com **GitHub Actions** + **Docker Registry** (GHCR, Docker Hub, etc.). Ajuste para sua plataforma de CI/CD._
 
 **Ferramentas**  
 - **Maven**: build e testes (`mvn -B -DskipTests=false verify`)  
@@ -226,8 +220,6 @@ services:
 ---
 
 ##  Prints do funcionamento
-
-> Inclua aqui evidências do ciclo completo. Sugestões de checklist:
 
 - **Pipeline CI/CD**
 > <img width="1523" height="235" alt="image" src="https://github.com/user-attachments/assets/9cf8e637-86c4-47df-ba9b-1337317e8a8c" />
