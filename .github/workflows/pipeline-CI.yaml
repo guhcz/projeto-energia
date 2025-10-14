@@ -7,7 +7,9 @@ on:
     branches: [ "master" ]
 
 env:
-  WORKDIR: energia/energia/Dockerfile
+  APP_DIR: energia/energia
+  DOCKER_CONTEXT: .
+  DOCKERFILE: energia/energia/Dockerfile
   JAVA_VERSION: '24'
   DOCKER_IMAGE: ${{ secrets.DOCKERHUB_USERNAME }}/energia
 
@@ -25,7 +27,7 @@ jobs:
           cache: 'maven'
 
       - name: Run unit tests
-        working-directory: ${{ env.WORKDIR }}
+        working-directory: ${{ env.APP_DIR }}
         run: mvn -B -ntp test
 
       - name: Upload test reports
@@ -69,8 +71,8 @@ jobs:
       - name: Build & Push image
         uses: docker/build-push-action@v6
         with:
-          context: ${{ env.WORKDIR }}
-          file: ${{ env.WORKDIR }}/Dockerfile
+          context: ${{ env.DOCKER_CONTEXT }}
+          file: ${{ env.DOCKERFILE }}/Dockerfile
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
