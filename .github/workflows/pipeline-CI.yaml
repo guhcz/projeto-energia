@@ -8,10 +8,11 @@ on:
 
 env:
   APP_DIR: energia/energia
-  DOCKER_CONTEXT: .
+  DOCKER_BUILD_CONTEXT: .
   DOCKERFILE: energia/energia/Dockerfile
   JAVA_VERSION: '24'
   DOCKER_IMAGE: ${{ secrets.DOCKERHUB_USERNAME }}/energia
+
 
 jobs:
   build-and-test:
@@ -64,15 +65,15 @@ jobs:
         with:
           images: ${{ env.DOCKER_IMAGE }}
           tags: |
-            type=raw,value=master-staging                 
-            type=sha,prefix=sha-,format=long              
+            type=raw,value=master-staging
+            type=sha,prefix=sha-,format=long
             type=raw,value=latest
 
       - name: Build & Push image
         uses: docker/build-push-action@v6
         with:
-          context: ${{ env.DOCKER_CONTEXT }}
-          file: ${{ env.DOCKERFILE }}/Dockerfile
+          context: ${{ env.DOCKER_BUILD_CONTEXT }}
+          file: ${{ env.DOCKERFILE }}
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
