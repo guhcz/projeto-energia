@@ -1,4 +1,4 @@
-name: CI/CD - Energia (Docker, master)
+name: CI/CD - Energia
 
 on:
   pull_request:
@@ -8,8 +8,8 @@ on:
 
 env:
   APP_DIR: energia/energia
-  DOCKERFILE: energia/energia/Dockerfile
-  DOCKER_BUILD_CONTEXT: energia/energia
+  DOCKERFILE: energia/Dockerfile
+  DOCKER_BUILD_CONTEXT: .
   JAVA_VERSION: '21'
   DOCKER_IMAGE: ${{ secrets.DOCKERHUB_USERNAME }}/energia
 
@@ -71,9 +71,9 @@ jobs:
         with:
           images: ${{ env.DOCKER_IMAGE }}
           tags: |
-            type=raw,value=master-staging           # tag para STAGING
-            type=sha,prefix=sha-,format=long        # tag imutável para PRODUÇÃO
-            type=raw,value=latest                   # opcional
+            type=raw,value=master-staging
+            type=sha,prefix=sha-,format=long
+            type=raw,value=latest
 
       - name: Build & Push image
         uses: docker/build-push-action@v6
