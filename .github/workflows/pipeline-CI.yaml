@@ -8,8 +8,7 @@ on:
 
 env:
   WORKDIR: energia/energia
-  JAVA_VERSION: '21'
-  DEPLOY_BRANCH: 'master'
+  JAVA_VERSION: '24'
   DOCKER_IMAGE: ${{ secrets.DOCKERHUB_USERNAME }}/energia
 
 jobs:
@@ -40,7 +39,7 @@ jobs:
   dockerize-and-push:
     name: Build & Push Docker
     needs: build-and-test
-    if: ${{ github.event_name == 'push' && github.ref_name == env.DEPLOY_BRANCH }}
+    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -63,9 +62,9 @@ jobs:
         with:
           images: ${{ env.DOCKER_IMAGE }}
           tags: |
-            type=raw,value=${{ env.DEPLOY_BRANCH }}-staging      # ex.: main-staging (staging)
-            type=sha,prefix=sha-,format=long                     # ex.: sha-<commit> (produção)
-            type=raw,value=latest                                # opcional
+            type=raw,value=master-staging                 
+            type=sha,prefix=sha-,format=long              
+            type=raw,value=latest
 
       - name: Build & Push image
         uses: docker/build-push-action@v6
@@ -77,23 +76,27 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
 
   deploy-staging:
+    name: Deploy Staging (Azure)
     needs: dockerize-and-push
+    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
     runs-on: ubuntu-latest
     steps:
-    - name: Deploy container (staging)
-      uses: azure/webapps-deploy@v3
-      with:
-        app-name: ${{ secrets.AZURE_WEBAPP_NAME_STAGING }}
-        publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE_STAGING }}
-        images: ${{ env.DOCKER_IMAGE }}:${{ env.DEPLOY_BRANCH }}-staging
+      - name: Deploy container (staging)
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: ${{ secrets.AZURE_WEBAPP_NAME_STAGING }}
+          publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE_STAGING }}
+          images: ${{ env.DOCKER_IMAGE }}:master-staging
 
   deploy-production:
+    name: Deploy Production (Azure)
     needs: deploy-staging
+    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
     runs-on: ubuntu-latest
     steps:
-    - name: Deploy container (prod)
-      uses: azure/webapps-deploy@v3
-      with:
-        app-name: ${{ secrets.AZURE_WEBAPP_NAME_PRODUCTION }}
-        publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE_PRODUCTION }}
-        images: ${{ env.DOCKER_IMAGE }}:sha-${{ github.sha }}
+      - name: Deploy container (prod)
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: ${{ secrets.AZURE_WEBAPP_NAME_PRODUCTION }}
+          publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE_PRODUCTION }}
+          images: ${{ env.DOCKER_IMAGE }}:sha-${{ github.sha }}
