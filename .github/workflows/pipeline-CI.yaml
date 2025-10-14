@@ -2,9 +2,9 @@ name: CI/CD - Energia (Docker, uma branch)
 
 on:
   pull_request:
-    branches: [ "master" ]         # testa PRs para main
+    branches: [ "master" ]
   push:
-    branches: [ "master" ]         # CD completo só em push na main
+    branches: [ "master" ]
 
 env:
   WORKDIR: energia/energia
