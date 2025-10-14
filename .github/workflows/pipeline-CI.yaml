@@ -10,7 +10,7 @@ env:
   APP_DIR: energia/energia
   DOCKERFILE: energia/Dockerfile
   DOCKER_BUILD_CONTEXT: .
-  JAVA_VERSION: '21'
+  JAVA_VERSION: '24'
   DOCKER_IMAGE: ${{ secrets.DOCKERHUB_USERNAME }}/energia
 
 jobs:
@@ -30,7 +30,7 @@ jobs:
       - uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: ${{ env.JAVA_VERSION }}
+          java-version: '24'
           cache: 'maven'
 
       - name: Run unit tests
