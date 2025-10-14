@@ -8,7 +8,7 @@ on:
 
 env:
   WORKDIR: energia/energia
-  JAVA_VERSION: '21'
+  JAVA_VERSION: '24'
   DOCKER_IMAGE: ${{ secrets.DOCKERHUB_USERNAME }}/energia
 
 jobs:

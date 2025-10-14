@@ -5,7 +5,7 @@ RUN mvn -B -q -DskipTests dependency:go-offline
 COPY src ./src
 RUN mvn -B -DskipTests clean package
 
-FROM eclipse-temurin:21-jre
+FROM eclipse-temurin:24-jre
 WORKDIR /app
 COPY --from=build /app/target/*.jar /app/app.jar
 ENV SPRING_PROFILES_ACTIVE=prod
